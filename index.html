@@ -4,48 +4,160 @@
   <meta charset="UTF-8">
   <title>3558 KVK SCHEDULE</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-    h2 { text-align: center; }
-    .input-group { margin: 10px 0; }
-    label { display: inline-block; width: 180px; }
-    input { padding: 5px; width: 200px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #999; padding: 8px; text-align: center; }
-    th { background: #ddd; }
-    .highlight { font-weight: bold; color: darkred; }
+    /* --- INICIO DE LOS NUEVOS ESTILOS --- */
+    
+    /* Fuente personalizada de Google Fonts para un look más moderno */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+    body { 
+      font-family: 'Orbitron', Arial, sans-serif; 
+      margin: 20px; 
+      background: #0d0a2b; /* Fondo azul noche oscuro del logo */
+      color: #e0d8ff; /* Color de texto lavanda pálido */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 600px;
+        background: rgba(18, 14, 58, 0.6);
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid #3c2f8a;
+        box-shadow: 0 0 25px rgba(255, 10, 220, 0.3);
+    }
+
+    h2 { 
+      text-align: center; 
+      font-size: 2.5em;
+      /* Gradiente de texto de cian a magenta */
+      background: linear-gradient(90deg, #0abcf9, #ff0adc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(10, 188, 249, 0.5), 0 0 20px rgba(255, 10, 220, 0.5);
+      margin-bottom: 30px;
+    }
+
+    .input-group { 
+      margin: 15px 0; 
+      display: flex;
+      align-items: center;
+    }
+    
+    label { 
+      display: inline-block; 
+      width: 180px; 
+      color: #a79fdc;
+      font-size: 0.9em;
+    }
+    
+    input { 
+      padding: 8px 12px; 
+      width: 200px;
+      background: #120e3a;
+      border: 1px solid #3c2f8a;
+      color: #e0d8ff;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+    }
+    
+    input:focus {
+        outline: none;
+        border-color: #0abcf9;
+        box-shadow: 0 0 10px rgba(10, 188, 249, 0.7);
+    }
+
+    button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin: 25px 0;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #e0d8ff;
+        background: linear-gradient(90deg, #0abcf9, #ff0adc);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(10, 188, 249, 0.5);
+    }
+
+    button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 25px rgba(255, 10, 220, 0.8), 0 0 15px rgba(10, 188, 249, 0.8);
+    }
+
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 20px; 
+      border: 1px solid #3c2f8a;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    th, td { 
+      border: 1px solid #3c2f8a; 
+      padding: 12px; 
+      text-align: center; 
+    }
+    
+    th { 
+      background: #120e3a;
+      color: #ff0adc; /* Color magenta para los encabezados */
+      text-shadow: 0 0 5px rgba(255, 10, 220, 0.7);
+    }
+
+    td {
+        background: rgba(13, 10, 43, 0.8);
+    }
+    
+    .highlight { 
+      font-weight: bold; 
+      color: #0abcf9; /* Color cian para los eventos */
+      text-shadow: 0 0 5px rgba(10, 188, 249, 0.7);
+    }
+
+    /* --- FIN DE LOS NUEVOS ESTILOS --- */
   </style>
 </head>
 <body>
-  <h2>3558 KVK SCHEDULE</h2>
 
-  <div class="input-group">
-    <label>Registration Date:</label>
-    <input type="date" id="regDate" value="2025-08-18">
+  <div class="container">
+    <h2>3558 KVK SCHEDULE</h2>
+
+    <div class="input-group">
+      <label>Registration Date:</label>
+      <input type="date" id="regDate" value="2025-08-18">
+    </div>
+
+    <div class="input-group">
+      <label>First Steps (time):</label>
+      <input type="text" id="firstSteps" value="13:00:00">
+    </div>
+
+    <div class="input-group">
+      <label>Siege the Land (time):</label>
+      <input type="text" id="siegeLand" value="25:00:00">
+    </div>
+
+    <button onclick="calculateDates()">Calculate</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Date & Time</th>
+        </tr>
+      </thead>
+      <tbody id="eventsTable"></tbody>
+    </table>
   </div>
-
-  <div class="input-group">
-    <label>First Steps 
-      (time to complete):</label>
-    <input type="text" id="firstSteps" value="13:00:00">
-  </div>
-
-  <div class="input-group">
-    <label>Siege the Land 
-     (time to complete):</label>
-    <input type="text" id="siegeLand" value="25:00:00">
-  </div>
-
-  <button onclick="calculateDates()">Calculate</button>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Event</th>
-        <th>Date & Time</th>
-      </tr>
-    </thead>
-    <tbody id="eventsTable"></tbody>
-  </table>
 
   <script>
     const baseEvents = [

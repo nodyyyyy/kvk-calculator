@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <title>3558 KVK SCHEDULE</title>
   <style>
-    /* --- INICIO DE LOS NUEVOS ESTILOS --- */
-    
     /* Fuente personalizada de Google Fonts para un look más moderno */
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
@@ -122,8 +120,6 @@
       color: #0abcf9; /* Color cian para los eventos */
       text-shadow: 0 0 5px rgba(10, 188, 249, 0.7);
     }
-
-    /* --- FIN DE LOS NUEVOS ESTILOS --- */
   </style>
 </head>
 <body>
@@ -172,9 +168,13 @@
       { name: "Pass 4", offsetDays: 61, siegeAffected: true },
     ];
 
+    // --- INICIO DE LOS CAMBIOS ---
+
     function formatDate(d) {
-      return d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'numeric' }) + ". " +
-             d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+      // Usa 'en-US' para inglés y obtiene las horas/minutos en UTC.
+      // Añade "UTC" al final para mayor claridad.
+      return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'numeric' }) + " " +
+             d.getUTCHours().toString().padStart(2,'0') + ":" + d.getUTCMinutes().toString().padStart(2,'0') + " UTC";
     }
 
     function parseTimeToHours(timeStr) {
@@ -183,11 +183,11 @@
     }
 
     function calculateDates() {
+      // El input de tipo "date" se interpreta como UTC 00:00, lo cual es perfecto.
       const regDate = new Date(document.getElementById("regDate").value);
       const firstSteps = parseTimeToHours(document.getElementById("firstSteps").value);
       const siegeLand = parseTimeToHours(document.getElementById("siegeLand").value);
 
-      // Base default values (initial: firstSteps=24h, siegeLand=48h)
       const defaultFirstSteps = 24;
       const defaultSiegeLand = 48;
 
@@ -199,24 +199,28 @@
 
       baseEvents.forEach(ev => {
         let date = new Date(regDate);
-        date.setDate(date.getDate() + ev.offsetDays);
-        date.setHours(1,0,0,0); // default time 1:00
+        
+        // --- Usa métodos UTC para todos los cálculos ---
+        date.setUTCDate(date.getUTCDate() + ev.offsetDays);
+        date.setUTCHours(1,0,0,0); // Hora por defecto 01:00 UTC
 
-        // Apply First Steps shift to all events
-        date.setHours(date.getHours() + adjustFirst);
+        // Aplica el ajuste de First Steps en UTC
+        date.setUTCHours(date.getUTCHours() + adjustFirst);
 
-        // Apply Siege shift only for siegeAffected events
+        // Aplica el ajuste de Siege en UTC
         if (ev.siegeAffected) {
-          date.setHours(date.getHours() + adjustSiege);
+          date.setUTCHours(date.getUTCHours() + adjustSiege);
         }
 
         let row = `<tr><td class="highlight">${ev.name}</td><td>${formatDate(date)}</td></tr>`;
         tbody.innerHTML += row;
       });
     }
+    
+    // --- FIN DE LOS CAMBIOS ---
 
     // Run once on load
     calculateDates();
   </script>
 </body>
-</html>
+</html>```

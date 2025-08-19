@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3558 KVK SCHEDULE</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+    h2 { text-align: center; }
+    .input-group { margin: 10px 0; }
+    label { display: inline-block; width: 180px; }
+    input { padding: 5px; width: 200px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #999; padding: 8px; text-align: center; }
+    th { background: #ddd; }
+    .highlight { font-weight: bold; color: darkred; }
+  </style>
+</head>
+<body>
+  <h2>3558 KVK SCHEDULE</h2>
+
+  <div class="input-group">
+    <label>Registration Date:</label>
+    <input type="date" id="regDate" value="2025-08-18">
+  </div>
+
+  <div class="input-group">
+    <label>First Steps 
+      (time to complete):</label>
+    <input type="text" id="firstSteps" value="13:00:00">
+  </div>
+
+  <div class="input-group">
+    <label>Siege the Land 
+     (time to complete):</label>
+    <input type="text" id="siegeLand" value="25:00:00">
+  </div>
+
+  <button onclick="calculateDates()">Calculate</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>Date & Time</th>
+      </tr>
+    </thead>
+    <tbody id="eventsTable"></tbody>
+  </table>
+
+  <script>
+    const baseEvents = [
+      { name: "Ancient ruins", offsetDays: 21, siegeAffected: false },
+      { name: "Pass 4*", offsetDays: 24, siegeAffected: false },
+      { name: "Pass 6*", offsetDays: 34, siegeAffected: true },
+      { name: "Altar of darkness", offsetDays: 35, siegeAffected: true },
+      { name: "Pass 7", offsetDays: 45, siegeAffected: true },
+      { name: "Pass 8", offsetDays: 48, siegeAffected: true },
+      { name: "Great ziggurat", offsetDays: 54, siegeAffected: true },
+      { name: "Pass 5", offsetDays: 57, siegeAffected: true },
+      { name: "Pass 4", offsetDays: 61, siegeAffected: true },
+    ];
+
+    function formatDate(d) {
+      return d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'numeric' }) + ". " +
+             d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+    }
+
+    function parseTimeToHours(timeStr) {
+      const [hh, mm, ss] = timeStr.split(":").map(Number);
+      return hh + mm/60 + ss/3600;
+    }
+
+    function calculateDates() {
+      const regDate = new Date(document.getElementById("regDate").value);
+      const firstSteps = parseTimeToHours(document.getElementById("firstSteps").value);
+      const siegeLand = parseTimeToHours(document.getElementById("siegeLand").value);
+
+      // Base default values (initial: firstSteps=24h, siegeLand=48h)
+      const defaultFirstSteps = 24;
+      const defaultSiegeLand = 48;
+
+      const adjustFirst = firstSteps - defaultFirstSteps;
+      const adjustSiege = siegeLand - defaultSiegeLand;
+
+      let tbody = document.getElementById("eventsTable");
+      tbody.innerHTML = "";
+
+      baseEvents.forEach(ev => {
+        let date = new Date(regDate);
+        date.setDate(date.getDate() + ev.offsetDays);
+        date.setHours(1,0,0,0); // default time 1:00
+
+        // Apply First Steps shift to all events
+        date.setHours(date.getHours() + adjustFirst);
+
+        // Apply Siege shift only for siegeAffected events
+        if (ev.siegeAffected) {
+          date.setHours(date.getHours() + adjustSiege);
+        }
+
+        let row = `<tr><td class="highlight">${ev.name}</td><td>${formatDate(date)}</td></tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    // Run once on load
+    calculateDates();
+  </script>
+</body>
+</html>
